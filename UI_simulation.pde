@@ -1,6 +1,6 @@
 import processing.sound.*; //<>// //<>//
 
-String releaseTag = "V7 29.Oct 2020";
+String releaseTag = "V8 2.Nov 2020";
 
 PFont fLCD;
 PImage overlay;
@@ -49,7 +49,7 @@ Button[] buttons;
 String[] buttonsText = {"Edit", "-", "+", "Mute\nStandby"}; 
 
 boolean isEditMode = false;
-boolean isStandby = true;
+boolean isStandby = false;
 
 
 void setup() {
@@ -188,7 +188,13 @@ void draw() {
     fullCalibration();
     runMachine(menuCal);
     break;
-  case 4: // OFF / STORAGE    
+  case 4: // OFF / STORAGE   
+    if (isStandby) {
+      updateMeasLCD_topRow("Hold Mute/Select");
+      updateMeasLCD_botRow("To turn off");
+      runMachine(menuCal);
+    }
+      
     if (buttons[0].justHeld3s) {
       startupMachineDefinition();
     }
@@ -205,7 +211,7 @@ void draw() {
   background(150);
   image(overlay, 0, 0, overlay.width, overlay.height);
 
-  if (modeHandler.get() == 4) { // not OFF
+  if (modeHandler.get() == 4 && !isStandby) { // not OFF
     drawOffLCDs();
   } else {
     drawLCDs();
