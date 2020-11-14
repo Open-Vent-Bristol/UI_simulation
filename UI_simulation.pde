@@ -1,6 +1,6 @@
 import processing.sound.*; //<>// //<>//
 
-String releaseTag = "V8 2.Nov 2020";
+String releaseTag = "V8 14.Nov 2020";
 
 PFont fLCD;
 PImage overlay;
@@ -51,6 +51,15 @@ String[] buttonsText = {"Edit", "-", "+", "Mute\nStandby"};
 boolean isEditMode = false;
 boolean isStandby = false;
 
+int xLCDMeas = 114;
+int yLCDMeas = 282;
+int xLCDSet = xLCDMeas + 537;
+int yLCDSet = yLCDMeas;
+int fontSize = 32;
+int fontH = 32;
+int fontW = 24;
+int wLCD = 17*fontW;
+int hLCD = 2*fontH+fontH/2;
 
 void setup() {
   size(1455, 1098);
@@ -83,11 +92,11 @@ void setup() {
 
   buttons = new Button[buttonsText.length];
   for (int i = 0; i < buttonsText.length; i++) {
-    buttons[i] = new Button(422+i*85, 480, 66, 66, buttonsText[i]);
+    buttons[i] = new Button(422+i*85, 475, 66, 66, buttonsText[i]);
   }
 
   // Create the font
-  fLCD = createFont("5x8-LCD.ttf", 28); //createFont("SourceCodePro-Regular.ttf", 24);
+  fLCD = createFont("5x8-LCD.ttf", fontSize); //createFont("SourceCodePro-Regular.ttf", 24);
 
 
   triggerSound = new SoundFile(this, "tick.aif");
@@ -194,7 +203,7 @@ void draw() {
       updateMeasLCD_botRow("To turn off");
       runMachine(menuCal);
     }
-      
+
     if (buttons[0].justHeld3s) {
       startupMachineDefinition();
     }
@@ -222,7 +231,7 @@ void draw() {
   }
 
   fill(0);
-  text(releaseTag, 120, 40);
+  text(releaseTag, 100, 20);
 }
 
 
@@ -381,13 +390,18 @@ void updateMeasLCD_breath() {
   float targetFlow = 53;
   char flowChar[] = getChar( sim.createFlowCurve()*targetFlow, 4);
   for (int i = 0; i<flowChar.length; i++) {
-    lcdMeas[i+5][0] =  flowChar[i];
+    lcdMeas[i+4][0] =  flowChar[i];
+  }
+  
+  char bpmChar[] = getChar( sim.createBPM()*bpm.get(), 2);
+  for (int i = 0; i<bpmChar.length; i++) {
+    lcdMeas[i+9][0] =  bpmChar[i];
   }
 
   int calcFio2 = int(fio2.get()+noise(minute())*0.05);
   char fio2Char[] = getChar( calcFio2, 3);
   for (int i = 0; i<fio2Char.length; i++) {
-    lcdMeas[i+11][0] =  fio2Char[i];
+    lcdMeas[i+12][0] =  fio2Char[i];
   }
 
   lcdMeas[15][0] =  '§';
@@ -399,16 +413,16 @@ void updateMeasLCD_breath() {
     lcdMeas[i][1] =  pressureChar[i];
   }
 
-  for (int i = 0; i<13; i++) {
+  for (int i = 0; i<14; i++) {
 
-    if (i+1<calcPressure/3.4615) {
-      lcdMeas[i+3][1] =  '*';
-    } else if ( calcPressure-(i)*3.4615 < 1.15) {
-      lcdMeas[i+3][1] =  ' ';
-    } else if ( calcPressure-(i)*3.4615 < 2.3) {
-      lcdMeas[i+3][1] =  '+';
+    if (i+1<calcPressure/3.2142) {
+      lcdMeas[i+2][1] =  '*';
+    } else if ( calcPressure-(i)*3.2142 < 1.07) {
+      lcdMeas[i+2][1] =  ' ';
+    } else if ( calcPressure-(i)*3.2142 < 2.14) {
+      lcdMeas[i+2][1] =  '+';
     } else {
-      lcdMeas[i+3][1] =  '"';
+      lcdMeas[i+2][1] =  '"';
     }
   }
 }
@@ -432,6 +446,9 @@ void keyPressed() {
   } else if (key == '4') {
     buttons[3].isClicked = true;
   }
+  else if( key == 's' ){
+    save("screen.png");
+  }
 }
 
 void keyReleased() {
@@ -448,11 +465,8 @@ void keyReleased() {
 
 void drawOffLCDs() {
   fill(50); 
-  int x = 133;
-  int y = 290;
-  rect(x, y, 16*20+45, 2*26+20);
-  x += 537;
-  rect(x, y, 16*20+45, 2*26+20);
+  rect(xLCDMeas, yLCDMeas, 16*fontW+45, 2*fontH+20);
+  rect(xLCDSet, yLCDSet, 16*fontW+45, 2*fontH+20);
 }
 
 
@@ -460,27 +474,25 @@ void drawOffLCDs() {
 void drawLCDs() {
   textFont(fLCD); 
   textAlign(LEFT, TOP); 
-  fill(255, 150, 0); 
-  int x = 133;
-  int y = 290;
-  rect(x, y, 16*20+45, 2*26+20); 
+  fill(100, 225, 0); 
+
+  rect(xLCDMeas, yLCDMeas, wLCD, hLCD); 
   fill(0); 
 
   for (int i = 0; i < lcdMeas.length; ++i) {
     for (int j = 0; j < lcdMeas[i].length; ++j) {
-      text(lcdMeas[i][j], x+i*22+8, y+j*30);
+      text(lcdMeas[i][j], xLCDMeas+i*fontW+fontW/2, yLCDMeas+j*fontH+fontH/16);
     }
   }
 
 
-  fill(255, 150, 0); 
-  x += 537;
-  rect(x, y, 16*20+45, 2*26+20); 
+  fill(100, 225, 0); 
+  rect(xLCDSet, yLCDSet, wLCD, hLCD); 
 
   fill(0); 
   for (int i = 0; i < lcdSet.length; ++i) {
     for (int j = 0; j < lcdSet[i].length; ++j) {
-      text(lcdSet[i][j], x+i*22+8, y+j*30);
+      text(lcdSet[i][j], xLCDSet+i*fontW+fontW/2, yLCDSet+j*fontH+fontH/16);
     }
   }
 }

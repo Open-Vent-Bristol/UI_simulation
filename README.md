@@ -13,3 +13,5 @@ If you want to try to compile it yourselfe, you would need to:
 V1-V7 offline development to initial state on github.
 V8 (WIP)
 - added additional step to off mode to keep the interactions more consistent.
+- new label
+- added measured breath rate
