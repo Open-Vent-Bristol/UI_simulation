@@ -15,3 +15,7 @@ V8 (WIP)
 - added additional step to off mode to keep the interactions more consistent.
 - new label
 - added measured breath rate
+- pressing 's' key creates screenshot
+
+
+![alt text](https://github.com/Open-Vent-Bristol/UI_simulation/blob/main/screen.png)
