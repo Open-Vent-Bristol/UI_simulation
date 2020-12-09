@@ -5,11 +5,14 @@ class SimulateMachine {
   float inhalePeriod;
   float exhalePeriod;
   float timeOffset = 0;
+      float outNorm = 0;
+      float out = 0;
 
-  void updateValues(int targetPress, int bpm, float ieRatio) {
+
+  void updateValues(int targetPress, int bpm, float iT) {
     targetPressure = targetPress;
     breathPeriod = (60 / bpm) * 1000;
-    inhalePeriod = breathPeriod * ieRatio;
+    inhalePeriod = iT*1000;
     exhalePeriod = breathPeriod-inhalePeriod;
     //timeOffset = millis();
   }
@@ -67,7 +70,6 @@ class SimulateMachine {
   }
 
   float createPressureCurve() {
-    float outNorm = 0;
     float currentTimePos = (millis()-timeOffset)%breathPeriod;
     if (currentTimePos < inhalePeriod/3) {
       outNorm = inhaleShape(currentTimePos*3/inhalePeriod);
@@ -77,7 +79,7 @@ class SimulateMachine {
       outNorm = exhaleShape(1-((currentTimePos-inhalePeriod)/exhalePeriod));
     }
 
-    return outNorm; //int(outNorm*float(targetPressure));
+    return out = out*0.9+outNorm*0.1; //int(outNorm*float(targetPressure));
   }
 
   float inhaleShape(float x) {

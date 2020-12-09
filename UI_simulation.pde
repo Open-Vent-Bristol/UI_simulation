@@ -1,6 +1,6 @@
 import processing.sound.*; //<>// //<>//
 
-String releaseTag = "V8 14.Nov 2020";
+String releaseTag = "V9 09.Dec 2020";
 
 PFont fLCD;
 PImage overlay;
@@ -12,11 +12,13 @@ SimulateMachine sim = new SimulateMachine();
 
 IntMenuItem pressure = new IntMenuItem(0, 1, 2, 35, 0, 45, 1); 
 IntMenuItem bpm = new IntMenuItem(0, 4, 2, 20, 10, 30, 2); 
-IERatioMenuItem ieRatio = new IERatioMenuItem(0, 7, 0.1); 
-IntMenuItem upperTidalVolume = new IntMenuItem(0, 13, 3, 500, 0, 700, 10); 
+FloatMenuItem iT = new FloatMenuItem(0, 7, 3, 2.0, 0.0, 6.0, 0.1); 
+IntMenuItem apnea = new IntMenuItem(0, 11, 2, 20, 0, 60, 1); 
+IntMenuItem deltaPT = new IntMenuItem(0, 14, 2, 2, 0, 20, 1); 
+//IERatioMenuItem ieRatio = new IERatioMenuItem(0, 7, 0.1); 
 IntMenuItem lowerTidalVolume = new IntMenuItem(1, 13, 3, 400, 0, 700, 10); 
-IntMenuItem apnea = new IntMenuItem(1, 10, 2, 20, 20, 60, 1); 
-IntMenuItem fio2 = new IntMenuItem(1, 6, 3, 20, 0, 100, 5); 
+IntMenuItem upperTidalVolume = new IntMenuItem(1, 9, 3, 500, 0, 700, 10); 
+IntMenuItem fio2 = new IntMenuItem(1, 5, 3, 20, 0, 100, 5); 
 
 // Modes: 0 - PCV, 1 - PSV, 2 - QCAL, 3 - FCAL, 4 - OFF
 ModeHandler modeHandler = new ModeHandler(1, 1, 4);
@@ -40,9 +42,6 @@ int oldModeState = 4;
 
 boolean isEditing;
 
-int[] nrOfMenuItems = {8, 5, 4};
-int[][] menuLCDPositions = {{}, {0, 3, 6, 12, 28, 25, 21, 16}, {16, 20, 24, 5, 11}, {16, 21, 26, 11}};
-int menuCurrentPosition = 0;
 
 Button[] buttons;
 
@@ -51,15 +50,15 @@ String[] buttonsText = {"Edit", "-", "+", "Mute\nStandby"};
 boolean isEditMode = false;
 boolean isStandby = false;
 
-int xLCDMeas = 114;
-int yLCDMeas = 282;
+int xLCDMeas = 118;
+int yLCDMeas = 278;
 int xLCDSet = xLCDMeas + 537;
 int yLCDSet = yLCDMeas;
-int fontSize = 32;
-int fontH = 32;
-int fontW = 24;
-int wLCD = 17*fontW;
-int hLCD = 2*fontH+fontH/2;
+int fontSize = 28;
+int fontH = 28;
+float fontW = 20.8;
+int wLCD = 392;
+int hLCD = 97;
 
 void setup() {
   size(1455, 1098);
@@ -68,16 +67,17 @@ void setup() {
 
   menuPCV.add(pressure);
   menuPCV.add(bpm);
-  menuPCV.add(ieRatio);
-  menuPCV.add(upperTidalVolume);
+  menuPCV.add(iT);
   menuPCV.add(lowerTidalVolume);
+  menuPCV.add(upperTidalVolume);
   menuPCV.add(fio2);
   menuPCV.add(modeHandler);
 
   menuPSV.add(pressure);
-  menuPSV.add(upperTidalVolume);
-  menuPSV.add(lowerTidalVolume);
   menuPSV.add(apnea);
+  menuPSV.add(deltaPT);
+  //menuPSV.add(lowerTidalVolume);
+  //menuPSV.add(upperTidalVolume);
   menuPSV.add(fio2);
   menuPSV.add(modeHandler);
 
@@ -101,6 +101,7 @@ void setup() {
 
   triggerSound = new SoundFile(this, "tick.aif");
   holdSound = new SoundFile(this, "Boop_256_8cyc.aif");
+  
   /*
   draw();
    save("screen.png");
@@ -128,7 +129,7 @@ void startupMachineDefinition() {
 void draw() {
   clearLCDs();
 
-  sim.updateValues(pressure.get(), bpm.get(), ieRatio.get());
+  sim.updateValues(pressure.get(), bpm.get(), iT.get());
 
   // Sound control
   for (int i = 0; i<buttons.length; i++) {
@@ -140,22 +141,6 @@ void draw() {
       holdSound.play();
     }
   }
-
-  /*
-  if (isOneHeld && !holdSound.isPlaying()) {
-   //holdSound.play();
-   } else if (!isOneHeld && holdSound.isPlaying()) {
-   //holdSound.stop();
-   }*/
-
-  /*
-  if (isOneHeld && lastSec != second()) {
-   lastSec = second();
-   triggerSound.play();
-   }*/
-
-
-
 
   // if no action within the last 120 sec. go to idle
   boolean noAction = true;
@@ -465,8 +450,8 @@ void keyReleased() {
 
 void drawOffLCDs() {
   fill(50); 
-  rect(xLCDMeas, yLCDMeas, 16*fontW+45, 2*fontH+20);
-  rect(xLCDSet, yLCDSet, 16*fontW+45, 2*fontH+20);
+  rect(xLCDMeas, yLCDMeas, wLCD, hLCD); 
+  rect(xLCDSet, yLCDSet, wLCD, hLCD); 
 }
 
 
@@ -481,7 +466,7 @@ void drawLCDs() {
 
   for (int i = 0; i < lcdMeas.length; ++i) {
     for (int j = 0; j < lcdMeas[i].length; ++j) {
-      text(lcdMeas[i][j], xLCDMeas+i*fontW+fontW/2, yLCDMeas+j*fontH+fontH/16);
+      text(lcdMeas[i][j], xLCDMeas+i*fontW+(wLCD-16*fontW)/2, yLCDMeas+j*fontH+(hLCD-2*fontH)/2-fontH/3+j*fontH/5);
     }
   }
 
@@ -492,7 +477,7 @@ void drawLCDs() {
   fill(0); 
   for (int i = 0; i < lcdSet.length; ++i) {
     for (int j = 0; j < lcdSet[i].length; ++j) {
-      text(lcdSet[i][j], xLCDSet+i*fontW+fontW/2, yLCDSet+j*fontH+fontH/16);
+      text(lcdSet[i][j], xLCDSet+i*fontW+(wLCD-16*fontW)/2, yLCDSet+j*fontH+(hLCD-2*fontH)/2-fontH/3+j*fontH/5);
     }
   }
 }
