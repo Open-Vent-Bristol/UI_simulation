@@ -31,4 +31,4 @@ V10
 - changed that the mode changes imediately on edit
 
 
-![alt text](https://github.com/Open-Vent-Bristol/UI_simulation/blob/main/screen.png)
+![alt text](https://github.com/Open-Vent-Bristol/UI_simulation/blob/main/screen.png)  
