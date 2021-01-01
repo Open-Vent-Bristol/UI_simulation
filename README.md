@@ -23,11 +23,13 @@ V8
 - added measured breath rate
 - pressing 's' key creates screenshot   
 
+
 V9  
 - changed I:E ratio to iT
 - added delta P Trigger
 - moved upper tidal volume and apnea
 - new label  
+
 
 V10  
 - changed that the mode changes imediately on edit
