@@ -24,6 +24,7 @@ class ModeHandler extends MenuItem {
   void loop() {
     if (txtIndex > modesText.length-1) txtIndex = 0;
     if (txtIndex < 0) txtIndex = modesText.length-1;
+    setSelected();
   }
 
   int get() {

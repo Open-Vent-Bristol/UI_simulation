@@ -1,6 +1,6 @@
 import processing.sound.*; //<>// //<>//
 
-String releaseTag = "V9 09.Dec 2020";
+String releaseTag = "V10 01.Jan 2021";
 
 PFont fLCD;
 PImage overlay;
@@ -101,7 +101,7 @@ void setup() {
 
   triggerSound = new SoundFile(this, "tick.aif");
   holdSound = new SoundFile(this, "Boop_256_8cyc.aif");
-  
+
   /*
   draw();
    save("screen.png");
@@ -154,7 +154,7 @@ void draw() {
   }
 
 
-
+  ArrayList<MenuItem> menu = menuPCV;
   switch (modeHandler.get()) {
   case 0:
     if (isStandby) {
@@ -164,6 +164,7 @@ void draw() {
       updateMeasLCD_breath();
     }
     runMachine(menuPCV);
+    menu = menuPCV;
     break;
   case 1:
     if (isStandby) {
@@ -173,20 +174,26 @@ void draw() {
       updateMeasLCD_breath();
     }
     runMachine(menuPSV);
+    menu = menuPCV;
     break;
   case 2:
     quickCalibration();
     runMachine(menuCal);
+    menu = menuPCV;
+
     break;
   case 3:
     fullCalibration();
     runMachine(menuCal);
+    menu = menuPCV;
+
     break;
   case 4: // OFF / STORAGE   
     if (isStandby) {
       updateMeasLCD_topRow("Hold Mute/Select");
       updateMeasLCD_botRow("To turn off");
       runMachine(menuCal);
+      menu = menuPCV;
     }
 
     if (buttons[0].justHeld3s) {
@@ -199,6 +206,7 @@ void draw() {
   // ugly way to deal with calibrationstate reset on mode change
   if (modeHandler.get() != oldModeState) {
     calState = 0;
+    menuIndex = menu.size()-1;
   }
   oldModeState = modeHandler.get();
 
@@ -271,7 +279,7 @@ void runMachine(ArrayList<MenuItem> menu) {
     if (isModeMenu) {
       if (buttons[0].justReleased) {
         modeHandler.setSelected();
-        lastModeSelectedTimeStamp = millis();
+        //lastModeSelectedTimeStamp = millis();
       }
     }
 
@@ -377,7 +385,7 @@ void updateMeasLCD_breath() {
   for (int i = 0; i<flowChar.length; i++) {
     lcdMeas[i+4][0] =  flowChar[i];
   }
-  
+
   char bpmChar[] = getChar( sim.createBPM()*bpm.get(), 2);
   for (int i = 0; i<bpmChar.length; i++) {
     lcdMeas[i+9][0] =  bpmChar[i];
@@ -430,8 +438,7 @@ void keyPressed() {
     buttons[2].isClicked = true;
   } else if (key == '4') {
     buttons[3].isClicked = true;
-  }
-  else if( key == 's' ){
+  } else if ( key == 's' ) {
     save("screen.png");
   }
 }
@@ -451,7 +458,7 @@ void keyReleased() {
 void drawOffLCDs() {
   fill(50); 
   rect(xLCDMeas, yLCDMeas, wLCD, hLCD); 
-  rect(xLCDSet, yLCDSet, wLCD, hLCD); 
+  rect(xLCDSet, yLCDSet, wLCD, hLCD);
 }
 
 

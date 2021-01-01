@@ -17,16 +17,18 @@ If you want to try to compile it yourselfe, you would need to:
 
 # Changelog
 V1-V7 offline development to initial state on github.  
-V8 
+V8  
 - added additional step to off mode to keep the interactions more consistent.
 - new label
 - added measured breath rate
-- pressing 's' key creates screenshot
-V9
+- pressing 's' key creates screenshot  
+V9  
 - changed I:E ratio to iT
 - added delta P Trigger
 - moved upper tidal volume and apnea
 - new label
+V10  
+- changed that the mode changes imediately on edit
 
 
 ![alt text](https://github.com/Open-Vent-Bristol/UI_simulation/blob/main/screen.png)
