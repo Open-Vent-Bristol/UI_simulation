@@ -1,6 +1,6 @@
 import processing.sound.*; //<>// //<>//
 
-String releaseTag = "V10 01.Jan 2021";
+String releaseTag = "V12 24.March 2021";
 
 PFont fLCD;
 PImage overlay;
@@ -76,8 +76,8 @@ void setup() {
   menuPSV.add(pressure);
   menuPSV.add(apnea);
   menuPSV.add(deltaPT);
-  //menuPSV.add(lowerTidalVolume);
-  //menuPSV.add(upperTidalVolume);
+  menuPSV.add(lowerTidalVolume);
+  menuPSV.add(upperTidalVolume);
   menuPSV.add(fio2);
   menuPSV.add(modeHandler);
 
