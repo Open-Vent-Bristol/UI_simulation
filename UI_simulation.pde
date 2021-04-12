@@ -1,6 +1,6 @@
 import processing.sound.*; //<>// //<>//
 
-String releaseTag = "V12 24.March 2021";
+String releaseTag = "V12 13.April 2021";
 
 PFont fLCD;
 PImage overlay;
@@ -140,6 +140,10 @@ void draw() {
     if (buttons[i].justHeld3s) {
       holdSound.play();
     }
+  }
+  
+  if (((buttons[3].justHeld1s || buttons[3].justHeld2s) &&  !isStandby)) {
+      holdSound.play();
   }
 
   // if no action within the last 120 sec. go to idle

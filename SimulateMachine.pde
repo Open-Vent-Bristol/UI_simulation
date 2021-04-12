@@ -18,22 +18,32 @@ class SimulateMachine {
   }
 
   float createVolCurve() {
-    /*float outNorm = 0;
+    float outNorm = 0;
     float currentTimePos = (millis()-timeOffset)%breathPeriod;
     if (currentTimePos < inhalePeriod) {
       outNorm = easeOutSine(currentTimePos/inhalePeriod);
     } else if (currentTimePos < breathPeriod) {
-      outNorm = 1;
+      outNorm = 1+noise(second())*0.01;
     }
     return outNorm;
-    */
     
-    return 1+noise(second())*0.01;
+    
+   // return 1+noise(second())*0.01;
   }
 
 
 
   float createFlowCurve() {
+    
+    float outNorm = 0;
+    float currentTimePos = (millis()-timeOffset)%breathPeriod;
+    if (currentTimePos < inhalePeriod*0.8) {
+      outNorm = easeOutSine(currentTimePos/(inhalePeriod*0.8));
+    } else if (currentTimePos < breathPeriod) {
+      outNorm = 1+noise(second())*0.01;
+    }
+    return outNorm;
+    
     /*
     float outNorm = 0;
     float currentTimePos = (millis()-timeOffset)%breathPeriod;
@@ -47,7 +57,8 @@ class SimulateMachine {
 
     return outNorm; //int(outNorm*float(targetPressure));
     */
-        return 1+noise(second())*0.1;
+    
+    //return 1+noise(second())*0.1;  
 
   }
   
