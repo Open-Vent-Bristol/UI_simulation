@@ -35,4 +35,8 @@ V10
 - changed that the mode changes imediately on edit
 
 
+V11
+- added confirm stage to switch between run and standby
+- added complex sounding 
+
 ![alt text](https://github.com/Open-Vent-Bristol/UI_simulation/blob/main/screen.png)  

@@ -1,6 +1,6 @@
 import processing.sound.*; //<>// //<>//
 
-String releaseTag = "V12 13.April 2021";
+String releaseTag = "V11 19.April 2021";
 
 PFont fLCD;
 PImage overlay;
@@ -39,6 +39,9 @@ int lastSec = 0;
 
 int menuIndex;
 int oldModeState = 4;
+
+int standbyTransition = 0; 
+int standbyChangeTimestamp = 0;
 
 boolean isEditing;
 
@@ -131,7 +134,7 @@ void draw() {
 
   sim.updateValues(pressure.get(), bpm.get(), iT.get());
 
-  // Sound control
+  // Sound control on button action
   for (int i = 0; i<buttons.length; i++) {
     buttons[i].update();
     if (buttons[i].justReleased && !buttons[i].isHeld3s) {
@@ -141,9 +144,19 @@ void draw() {
       holdSound.play();
     }
   }
-  
-  if (((buttons[3].justHeld1s || buttons[3].justHeld2s) &&  !isStandby)) {
+
+  // sound control on state transition
+  if (buttons[3].isHeld &&  !isStandby) {
+    if (buttons[3].justHeld1s)
+    {
       holdSound.play();
+    }
+    if (buttons[3].getHoldTimeInSec()>1 && buttons[3].getHoldTime()<3001) {
+      if ((buttons[3].getHoldTime()/125)%2 == 0) {
+        holdSound.play();
+        delay(125); // not a nice way to avoid multi sound triggers.
+      }
+    }
   }
 
   // if no action within the last 120 sec. go to idle
@@ -242,10 +255,33 @@ void runMachine(ArrayList<MenuItem> menu) {
     isEditMode = !isEditMode;
   } 
 
-  // Holding Mute/standby button for 3 sec toggles Edit Mode
-  if (buttons[3].justHeld3s) {
-    isStandby = !isStandby;
-  } 
+  // switch standby/run mode
+  switch(standbyTransition) {
+
+  case 0:
+    {
+      if (buttons[3].justHeld3s) {
+        standbyTransition = 1;
+        standbyChangeTimestamp = millis();
+      }
+    }
+    break;
+
+  case 1:
+    {
+      if (buttons[0].justPressed) {
+        standbyTransition = 0;
+        isStandby = !isStandby;
+      } else if (buttons[1].justPressed || buttons[2].justPressed || buttons[3].justPressed) {
+        standbyTransition = 0;
+      }
+      if (millis()-standbyChangeTimestamp>3000) {
+        standbyTransition = 0;
+      }
+    }
+    break;
+  }    
+
 
 
   if (!isEditMode) {
@@ -263,6 +299,7 @@ void runMachine(ArrayList<MenuItem> menu) {
         if (buttons[2].justReleased) miEdit.increase();
         if (buttons[1].justReleased) miEdit.decrease();
       }
+
       menuChar = editChar;
     } else {
       if (buttons[0].justReleased && !buttons[0].isHeld3s) isEditing = true;
@@ -300,6 +337,11 @@ void runMachine(ArrayList<MenuItem> menu) {
       } else {
         lcdSet[miEdit.startIndex-1][miEdit.lineIndex] = ' ';
       }
+    }
+
+    // confirm screen
+    if (standbyTransition == 1) {
+      updateConfirmLCD();
     }
   }
 }
@@ -342,6 +384,18 @@ void updateKeepHoldLCD(int sec, char[] target) {
   // write target
   for (int i = 0; i<target.length && i<6; i++) {
     lcdSet[10+i][1] = target[i];
+  }
+}
+
+void updateConfirmLCD() {
+  String text0 = "Select > run Ma.";
+  if (!isStandby) {
+    text0 = "Select > Standby";
+  }
+  String text1 = "AnyKey > return ";
+  for (int i = 0; i<16; i++) {
+    lcdSet[i][0] = text0.charAt(i);
+    lcdSet[i][1] = text1.charAt(i);
   }
 }
 
