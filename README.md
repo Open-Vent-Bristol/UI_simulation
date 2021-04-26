@@ -37,6 +37,6 @@ V10
 
 V11
 - added confirm stage to switch between run and standby
-- added complex sounding 
+- added more complex beep pattern when switching from run to standby
 
 ![alt text](https://github.com/Open-Vent-Bristol/UI_simulation/blob/main/screen.png)  
