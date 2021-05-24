@@ -39,4 +39,9 @@ V11
 - added confirm stage to switch between run and standby
 - added more complex beep pattern when switching from run to standby
 
+
+V12
+- extended the time to confirm run/standby mode to 10 sec
+- fixed a bug not showing the confrimscreen when not in edit mode
+
 ![alt text](https://github.com/Open-Vent-Bristol/UI_simulation/blob/main/screen.png)  

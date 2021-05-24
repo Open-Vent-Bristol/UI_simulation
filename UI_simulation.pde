@@ -1,6 +1,6 @@
 import processing.sound.*; //<>// //<>//
 
-String releaseTag = "V11 19.April 2021";
+String releaseTag = "V12 24.Mai 2021";
 
 PFont fLCD;
 PImage overlay;
@@ -275,7 +275,7 @@ void runMachine(ArrayList<MenuItem> menu) {
       } else if (buttons[1].justPressed || buttons[2].justPressed || buttons[3].justPressed) {
         standbyTransition = 0;
       }
-      if (millis()-standbyChangeTimestamp>3000) {
+      if (millis()-standbyChangeTimestamp>10000) {
         standbyTransition = 0;
       }
     }
@@ -338,11 +338,10 @@ void runMachine(ArrayList<MenuItem> menu) {
         lcdSet[miEdit.startIndex-1][miEdit.lineIndex] = ' ';
       }
     }
-
-    // confirm screen
-    if (standbyTransition == 1) {
-      updateConfirmLCD();
-    }
+  }
+  // confirm screen
+  if (standbyTransition == 1) {
+    updateConfirmLCD();
   }
 }
 
